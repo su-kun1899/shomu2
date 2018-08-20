@@ -31,13 +31,37 @@ func TestAdd(t *testing.T) {
 			}
 		})
 	}
+
+	// cleanup
+	removeTestFile()
+}
+
+func testFileName() (string, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	filename := dir + "/shomu2_test"
+
+	return filename, nil
 }
 
 func readTestFile() ([]string, error) {
-	dir, _ := os.Getwd()
-	filename := dir + "/shomu2_test"
+	fileName, err := testFileName()
+	if err != nil {
+		return nil, err
+	}
+	return readFile(fileName)
+}
 
-	return readFile(filename)
+func removeTestFile() error {
+	fileName, err := testFileName()
+	if err != nil {
+		return err
+	}
+	os.Remove(fileName)
+
+	return nil
 }
 
 func readFile(fileName string) ([]string, error) {
