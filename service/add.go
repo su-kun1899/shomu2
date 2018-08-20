@@ -1,12 +1,22 @@
 package service
 
-import "fmt"
+import (
+	"os"
+	"fmt"
+)
 
 type Item struct {
 	Value string
 }
 
-func Add(item Item) {
-	println("Sorry, not implemented yet")
-	fmt.Sprintln("item value: ", item.Value)
+func Add(item Item) error {
+	println("item value: ", item.Value)
+	// TODO ファイル名を環境変数で管理したい
+	file, err := os.Create("shomu2_test")
+	if err != nil {
+		return err
+	}
+	fmt.Printf("file name: %s\n", file.Name())
+
+	return nil
 }
