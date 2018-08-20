@@ -15,25 +15,37 @@ func TestAdd(t *testing.T) {
 		args args
 	}{
 		{"add item", struct{ item Item }{item: Item{Value: "Hello, world!"}}},
+		{"add item", struct{ item Item }{item: Item{Value: "Hello, Alice!"}}},
 	}
-	for _, tt := range tests {
+	defer func() {
+		err := removeTestFile()
+		if err != nil {
+			t.Fatalf("colud not remove test file: %v", err)
+		}
+	}()
+
+	for index, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			Add(tt.args.item)
 			actual, err := readTestFile()
 			if err != nil {
 				t.Fatalf("colud not read test file. %s", err)
 			}
-			if len(actual) != 1 {
-				t.Fatalf("unexpected item count. %d", len(actual))
-			}
-			if actual[0] != tt.args.item.Value {
-				t.Fatalf("unexpected item value. %s", actual[0])
+			if actual[index] != tt.args.item.Value {
+				t.Fatalf("unexpected item value. %s", actual[index])
 			}
 		})
 	}
 
-	// cleanup
-	removeTestFile()
+	// Append
+	// TODO 追記はケースを分けよう
+	actual, err := readTestFile()
+	if err != nil {
+		t.Fatalf("colud not read test file. %s", err)
+	}
+	if len(actual) != len(tests) {
+		t.Fatalf("unexpected item count. %d", len(actual))
+	}
 }
 
 func testFileName() (string, error) {

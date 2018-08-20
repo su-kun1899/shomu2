@@ -10,13 +10,28 @@ type Item struct {
 }
 
 func Add(item Item) error {
-	println("item value: ", item.Value)
 	// TODO ファイル名を環境変数で管理したい
-	file, err := os.Create("shomu2_test")
+	filename := "shomu2_test"
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		// TODO メソッドにしたい
+		// TODO なかったら作るのは最初にやってしまう？
+		file, err := os.Create(filename)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+	}
+
+	file, err := os.OpenFile(filename, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("file name: %s\n", file.Name())
+	defer file.Close()
+
+	_, err = file.WriteString(fmt.Sprintf("%s\n", item.Value))
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
