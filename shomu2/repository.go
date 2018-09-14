@@ -10,6 +10,7 @@ type Repository struct {
 	FileName string
 }
 
+// Add is a function to add new item
 func (repo Repository) Add(item Item) error {
 	file, err := os.OpenFile(repo.FileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
@@ -25,6 +26,7 @@ func (repo Repository) Add(item Item) error {
 	return nil
 }
 
+// ReadAll is a function to read all items
 func (repo Repository) ReadAll() ([]Item, error) {
 	fp, err := os.Open(repo.FileName)
 	if err != nil {
@@ -41,6 +43,7 @@ func (repo Repository) ReadAll() ([]Item, error) {
 	return items, nil
 }
 
+// NewRepository is a constructor for repository
 func NewRepository(filename string) (Repository, error) {
 	// create file if not exists
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
