@@ -7,11 +7,11 @@ import (
 )
 
 type Repository struct {
-	fileName string
+	FileName string
 }
 
 func (repo Repository) Add(item Item) error {
-	file, err := os.OpenFile(repo.fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	file, err := os.OpenFile(repo.FileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
 		return err
 	}
@@ -26,7 +26,7 @@ func (repo Repository) Add(item Item) error {
 }
 
 func (repo Repository) ReadAll() ([]Item, error) {
-	fp, err := os.Open(repo.fileName)
+	fp, err := os.Open(repo.FileName)
 	if err != nil {
 		return nil, err
 	}
@@ -42,9 +42,8 @@ func (repo Repository) ReadAll() ([]Item, error) {
 }
 
 func NewRepository(filename string) (Repository, error) {
-	// ファイルがなかったら作る
+	// create file if not exists
 	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		// TODO Untested
 		file, err := os.Create(filename)
 		if err != nil {
 			return Repository{filename}, err
