@@ -1,24 +1,34 @@
 package main
 
 import (
-	"github.com/urfave/cli"
 	"fmt"
 	"os"
-	"log"
 )
 
-func main() {
-	app := cli.NewApp()
-	app.Name = "shomu2"
-	app.Usage = "fight the loneliness!"
-	app.Version = "0.0.1"
-	app.Action = func(c *cli.Context) error {
-		fmt.Println("Hello friend!")
-		return nil
-	}
+func runCmd(args []string) int {
+	fmt.Println("Hello friend!")
 
-	err := app.Run(os.Args)
-	if err != nil {
-		log.Fatal(err)
-	}
+	// 引数のチェック
+	//if len(args) != 2 {
+	//	fmt.Fprintf(os.Stderr, "[ERROR] required two arguments(pattern,package)\n")
+	//	return 1
+	//}
+	//pattern := args[0]
+	//packageName := args[1]
+	//
+	//comments, err := comment.ExtractComments(pattern, packageName)
+	//if err != nil {
+	//	fmt.Fprintf(os.Stderr, "[ERROR] %v\n", err)
+	//	return 1
+	//}
+	//
+	//for _, c := range comments {
+	//	fmt.Printf(c.String())
+	//}
+
+	return 0
+}
+
+func main() {
+	os.Exit(runCmd(os.Args[1:]))
 }
