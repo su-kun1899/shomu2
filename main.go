@@ -5,17 +5,17 @@ import (
 	"os"
 )
 
-// ExitStatus defines statuses returned when command exit
-type ExitStatus = int
+// exitStatus defines statuses returned when command exit
+type exitStatus = int
 
 // Exit Statuses
 const (
-	success            ExitStatus = 0
-	lackOfRequiredArgs ExitStatus = 11
-	notExistCommand    ExitStatus = 12
+	success            exitStatus = 0
+	lackOfRequiredArgs exitStatus = 11
+	notExistCommand    exitStatus = 12
 )
 
-func runCmd(args []string) ExitStatus {
+func runCmd(args []string) exitStatus {
 	// 引数のチェック
 	if len(args) != 2 {
 		fmt.Fprintf(os.Stderr, "[ERROR] required two arguments(command,item)\n")
