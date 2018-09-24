@@ -6,7 +6,7 @@ import (
 )
 
 // ExitStatus defines statuses returned when command exit
-type ExitStatus int
+type ExitStatus = int
 
 // Exit Statuses
 const (
@@ -14,10 +14,6 @@ const (
 	lackOfRequiredArgs ExitStatus = 11
 	notExistCommand    ExitStatus = 12
 )
-
-func (es ExitStatus) toInt() int {
-	return int(es)
-}
 
 func runCmd(args []string) ExitStatus {
 	// 引数のチェック
@@ -41,5 +37,5 @@ func runCmd(args []string) ExitStatus {
 }
 
 func main() {
-	os.Exit(runCmd(os.Args[1:]).toInt())
+	os.Exit(runCmd(os.Args[1:]))
 }
