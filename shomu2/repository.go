@@ -10,7 +10,7 @@ type Repository struct {
 	FileName string
 }
 
-// Add is a function to add new item
+// Save is a function to add new item
 func (repo Repository) Add(item Item) error {
 	file, err := os.OpenFile(repo.FileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {

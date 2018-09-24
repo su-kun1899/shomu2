@@ -21,7 +21,7 @@ func TestAdd(t *testing.T) {
 	item := shomu2.Item{Value: "Hello, world!"}
 	err = sut.Add(item)
 	if err != nil {
-		t.Errorf("Add() error = %v", err)
+		t.Errorf("Save() error = %v", err)
 	}
 
 	// and
