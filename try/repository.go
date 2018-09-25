@@ -20,8 +20,7 @@ func (r *fileRepository) findAll() ([]Item, error) {
 
 // NewRepository is a constructor for Repository
 func NewRepository(fileName string) (Repository, error) {
-	repository := new(fileRepository)
-	repository.fileName = fileName
+	repository := &fileRepository{fileName: fileName}
 
 	// create file if not exists
 	if _, err := os.Stat(fileName); os.IsNotExist(err) {
