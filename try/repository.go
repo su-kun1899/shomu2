@@ -1,9 +1,14 @@
 package try
 
-import "os"
+import (
+	"os"
+	"bufio"
+	"strings"
+	"encoding/base64"
+)
 
 type Repository interface {
-	findAll() ([]Item, error)
+	Search(keyword string) ([]Item, error)
 }
 
 type Item struct {
@@ -14,8 +19,29 @@ type fileRepository struct {
 	fileName string
 }
 
-func (r *fileRepository) findAll() ([]Item, error) {
-	panic("implement me")
+// Search is a function for search items by keyword.
+// It returns items which contains keyword in its value.
+func (r *fileRepository) Search(keyword string) ([]Item, error) {
+	fp, err := os.Open(r.fileName)
+	if err != nil {
+		return nil, err
+	}
+	defer fp.Close()
+
+	items := make([]Item, 0)
+	scanner := bufio.NewScanner(fp)
+	for scanner.Scan() {
+		decoded, err := base64.URLEncoding.DecodeString(scanner.Text())
+		if err != nil {
+			return items, err
+		}
+
+		if line := string(decoded); strings.Contains(line, keyword) {
+			items = append(items, Item{line})
+		}
+	}
+
+	return items, nil
 }
 
 // NewRepository is a constructor for Repository

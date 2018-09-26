@@ -1,9 +1,11 @@
 package try_test
 
 import (
-	"testing"
 	"os"
+	"testing"
+
 	"github.com/su-kun1899/shomu2/try"
+	"strings"
 )
 
 func TestNewFileRepository(t *testing.T) {
@@ -41,4 +43,32 @@ func TestNewFileRepository(t *testing.T) {
 			t.Error("unexpected error:", err)
 		}
 	})
+}
+
+func Test_Repository_Search(t *testing.T) {
+	// TODO ケース増やして整理したい
+	repository, err := try.NewRepository("testdata/shomu2db")
+	if err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+
+	items, err := repository.Search("Hello")
+	if err != nil {
+		t.Error("unexpected error:", err)
+	}
+
+	if size := len(items); size != 1 {
+		t.Errorf("Search's result size want %d but got %d", 1, size)
+	}
+
+	for _, item := range items {
+		if !strings.Contains(item.Value, "Hello") {
+			t.Errorf("Item.value must contain %s but got %s", "Hello", item.Value)
+		}
+	}
+
+	// TODO encodeのサンプルコード あとで消す
+	//println(base64.URLEncoding.EncodeToString([]byte("Hello, world!")))
+	//println(base64.URLEncoding.EncodeToString([]byte("Hello, bob!")))
+	//println(base64.URLEncoding.EncodeToString([]byte("Hello")))
 }
