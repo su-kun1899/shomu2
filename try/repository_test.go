@@ -2,6 +2,7 @@ package try_test
 
 import (
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/su-kun1899/shomu2/try"
@@ -45,11 +46,49 @@ func TestNewFileRepository(t *testing.T) {
 	})
 }
 
+func Test_Repository_Add(t *testing.T) {
+	// TODO ケース増やして整理したい
+	repository, err := try.NewRepository("testdata/shomu2db")
+	if err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+
+	// cleanup
+	if err = repository.DeleteAll(); err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+
+	item := try.Item{Value: "HogeHoge"}
+	err = repository.Add(item)
+	if err != nil {
+		t.Error("unexpected error:", err)
+	}
+
+	items, err := repository.Search(item.Value)
+	if size := len(items); size != 1 {
+		t.Errorf("Search's result size want %d but got %d", 1, size)
+	}
+
+	if actual := items[0]; !reflect.DeepEqual(actual, item) {
+		t.Errorf("Search want %v but got %v", actual, item)
+	}
+
+	// cleanup
+	if err = repository.DeleteAll(); err != nil {
+		t.Fatal("unexpected error:", err)
+	}
+}
+
 func Test_Repository_Search(t *testing.T) {
 	// TODO ケース増やして整理したい
 	repository, err := try.NewRepository("testdata/shomu2db")
 	if err != nil {
 		t.Fatal("unexpected error:", err)
+	}
+
+	err = repository.Add(try.Item{Value: "Hello, world."})
+	if err != nil {
+		t.Error("unexpected error:", err)
 	}
 
 	items, err := repository.Search("Hello")
@@ -66,9 +105,4 @@ func Test_Repository_Search(t *testing.T) {
 			t.Errorf("Item.value must contain %s but got %s", "Hello", item.Value)
 		}
 	}
-
-	// TODO encodeのサンプルコード あとで消す
-	//println(base64.URLEncoding.EncodeToString([]byte("Hello, world!")))
-	//println(base64.URLEncoding.EncodeToString([]byte("Hello, bob!")))
-	//println(base64.URLEncoding.EncodeToString([]byte("Hello")))
 }
