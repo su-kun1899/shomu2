@@ -6,65 +6,106 @@ import (
 	"testing"
 
 	"github.com/su-kun1899/shomu2/shomu2"
+	"strings"
 )
 
-func TestAdd(t *testing.T) {
+func TestNewFileRepository(t *testing.T) {
+	t.Run("use file if exists", func(t *testing.T) {
+		// given
+		fileName := "testdata/shomu2db"
+
+		// when-then: check already exists
+		if _, err := os.Stat(fileName); err != nil {
+			t.Fatal("unexpected error:", err)
+		}
+
+		// when-then
+		if _, err := shomu2.NewRepository(fileName); err != nil {
+			t.Error("unexpected error:", err)
+		}
+	})
+
+	t.Run("create new file if not exists", func(t *testing.T) {
+		// given
+		fileName := os.TempDir() + "new"
+
+		// when-then
+		if _, err := shomu2.NewRepository(fileName); err != nil {
+			t.Error("unexpected error:", err)
+		}
+
+		// when-then
+		if _, err := os.Stat(fileName); err != nil {
+			t.Error("unexpected error:", err)
+		}
+
+		// cleanup
+		if err := os.Remove(fileName); err != nil {
+			t.Error("unexpected error:", err)
+		}
+	})
+}
+
+func Test_Repository_Add(t *testing.T) {
+	// TODO ケース増やして整理したい
 	// given
-	fileName := os.TempDir() + "test.shomu2"
-	sut, err := shomu2.NewRepository(fileName)
+	repository, err := shomu2.NewRepository("testdata/shomu2db")
 	if err != nil {
-		t.Errorf("NewRepository() error = %v", err)
-		return
+		t.Fatal("unexpected error:", err)
 	}
 
-	// when
-	item := shomu2.Item{Value: "Hello, world!"}
-	err = sut.Add(item)
+	// when:
+	item := shomu2.Item{Value: "HogeHoge"}
+	err = repository.Add(item)
 	if err != nil {
-		t.Errorf("Save() error = %v", err)
+		t.Error("unexpected error:", err)
 	}
 
-	// and
-	actual, err := sut.ReadAll()
-	if err != nil {
-		t.Errorf("ReadAll() error = %v", err)
+	// then:
+	items, err := repository.Search(item.Value)
+	if size := len(items); size != 1 {
+		t.Errorf("Search's result size want %d but got %d", 1, size)
 	}
-
-	// then
-	if len(actual) != 1 || actual[0] != item {
-		t.Errorf("Can't read added item. ReadAll() = %v, sut = %v", actual, sut)
-		return
+	if actual := items[0]; !reflect.DeepEqual(actual, item) {
+		t.Errorf("Search want %v but got %v", actual, item)
 	}
 
 	// cleanup
-	os.Remove(fileName)
+	if err = repository.DeleteAll(); err != nil {
+		t.Fatal("unexpected error:", err)
+	}
 }
 
-func TestNewRepository(t *testing.T) {
-	newFileName := os.TempDir() + "new"
-	type args struct {
-		filename string
+func Test_Repository_Search(t *testing.T) {
+	// TODO ケース増やして整理したい
+	// given
+	repository, err := shomu2.NewRepository("testdata/shomu2db")
+	if err != nil {
+		t.Fatal("unexpected error:", err)
 	}
-	tests := []struct {
-		name    string
-		args    args
-		want    shomu2.Repository
-		wantErr bool
-	}{
-		{"empty file name", args{""}, shomu2.Repository{}, true},
-		{"new file name", args{newFileName}, shomu2.Repository{FileName: newFileName}, false},
-		{"exists file name", args{"testdata/exists"}, shomu2.Repository{FileName: "testdata/exists"}, false},
+	err = repository.Add(shomu2.Item{Value: "Hello, world."})
+	if err != nil {
+		t.Fatal("unexpected error:", err)
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := shomu2.NewRepository(tt.args.filename)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("NewRepository() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewRepository() = %v, want %v", got, tt.want)
-			}
-		})
+
+	// when
+	items, err := repository.Search("Hello")
+	if err != nil {
+		t.Error("unexpected error:", err)
+	}
+
+	// then
+	if size := len(items); size != 1 {
+		t.Errorf("Search's result size want %d but got %d", 1, size)
+	}
+	for _, item := range items {
+		if !strings.Contains(item.Value, "Hello") {
+			t.Errorf("Item.value must contain %s but got %s", "Hello", item.Value)
+		}
+	}
+
+	// cleanup
+	if err = repository.DeleteAll(); err != nil {
+		t.Fatal("unexpected error:", err)
 	}
 }

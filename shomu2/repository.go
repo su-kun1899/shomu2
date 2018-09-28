@@ -1,34 +1,50 @@
 package shomu2
 
 import (
-	"os"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"bufio"
+	"strings"
+	"encoding/base64"
 )
 
-type Repository struct {
-	FileName string
+type Repository interface {
+	Search(keyword string) ([]Item, error)
+	Add(item Item) error
+	DeleteAll() error
 }
 
-// Save is a function to add new item
-func (repo Repository) Add(item Item) error {
-	file, err := os.OpenFile(repo.FileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+type Item struct {
+	Value string
+}
+
+type fileRepository struct {
+	fileName string
+}
+
+func (r *fileRepository) Add(item Item) error {
+	file, err := os.OpenFile(r.fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	_, err = file.WriteString(fmt.Sprintf("%s\n", item.Value))
-	if err != nil {
-		return err
-	}
+	encoded := base64.URLEncoding.EncodeToString([]byte(item.Value))
+	_, err = file.WriteString(fmt.Sprintf("%s\n", encoded))
 
+	return err
+}
+
+func (r *fileRepository) DeleteAll() error {
+	ioutil.WriteFile(r.fileName, []byte(""), 0666)
 	return nil
 }
 
-// ReadAll is a function to read all items
-func (repo Repository) ReadAll() ([]Item, error) {
-	fp, err := os.Open(repo.FileName)
+// Search is a function for search items by keyword.
+// It returns items which contains keyword in its value.
+func (r *fileRepository) Search(keyword string) ([]Item, error) {
+	fp, err := os.Open(r.fileName)
 	if err != nil {
 		return nil, err
 	}
@@ -37,22 +53,31 @@ func (repo Repository) ReadAll() ([]Item, error) {
 	items := make([]Item, 0)
 	scanner := bufio.NewScanner(fp)
 	for scanner.Scan() {
-		items = append(items, Item{scanner.Text()})
+		decoded, err := base64.URLEncoding.DecodeString(scanner.Text())
+		if err != nil {
+			return items, err
+		}
+
+		if line := string(decoded); strings.Contains(line, keyword) {
+			items = append(items, Item{line})
+		}
 	}
 
 	return items, nil
 }
 
-// NewRepository is a constructor for repository
-func NewRepository(filename string) (Repository, error) {
+// NewRepository is a constructor for Repository
+func NewRepository(fileName string) (Repository, error) {
+	repository := &fileRepository{fileName: fileName}
+
 	// create file if not exists
-	if _, err := os.Stat(filename); os.IsNotExist(err) {
-		file, err := os.Create(filename)
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		file, err := os.Create(fileName)
 		if err != nil {
-			return Repository{filename}, err
+			return repository, err
 		}
 		defer file.Close()
 	}
 
-	return Repository{filename}, nil
+	return repository, nil
 }
