@@ -1,22 +1,18 @@
 package shomu2
 
 import (
+	"bufio"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"os"
-	"bufio"
 	"strings"
-	"encoding/base64"
 )
 
 type Repository interface {
 	Search(keyword string) ([]Item, error)
 	Add(item Item) error
 	DeleteAll() error
-}
-
-type Item struct {
-	Value string
 }
 
 type fileRepository struct {
