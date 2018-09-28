@@ -19,6 +19,7 @@ type fileRepository struct {
 	fileName string
 }
 
+// Add is a function to add item.
 func (r *fileRepository) Add(item Item) error {
 	file, err := os.OpenFile(r.fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
@@ -32,6 +33,7 @@ func (r *fileRepository) Add(item Item) error {
 	return err
 }
 
+// DeleteAll is a function to delete all items.
 func (r *fileRepository) DeleteAll() error {
 	ioutil.WriteFile(r.fileName, []byte(""), 0666)
 	return nil
