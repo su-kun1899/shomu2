@@ -11,7 +11,9 @@ func TestNewCommand(t *testing.T) {
 	if err != nil {
 		t.Error("unexpected error:", err)
 	}
-	//
-	//push := command.(*shomu2.Push)
-	//push.Run()
+
+	// then
+	if _, ok := command.(*shomu2.Push); !ok {
+		t.Errorf("command is not push command: %v", command)
+	}
 }
