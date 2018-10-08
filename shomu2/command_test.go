@@ -47,9 +47,12 @@ func TestPush_Run(t *testing.T) {
 	}
 
 	// when
-	command.Run(param.Value)
+	exitStatus := command.Run(param.Value)
 
 	// then
+	if exitStatus.Code != shomu2.SUCCESS {
+		t.Errorf("Run want %v but got %v", shomu2.SUCCESS, exitStatus.Code)
+	}
 	if !called {
 		t.Error("Repository is not called")
 	}
