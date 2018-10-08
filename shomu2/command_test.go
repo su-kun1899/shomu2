@@ -3,6 +3,7 @@ package shomu2_test
 import (
 	"testing"
 	"github.com/su-kun1899/shomu2/shomu2"
+	"reflect"
 )
 
 func TestNewCommand_push(t *testing.T) {
@@ -30,21 +31,23 @@ func TestNewCommand_push(t *testing.T) {
 
 func TestPush_Run(t *testing.T) {
 	// given
+	param := shomu2.Item{Value: "push!push!"}
+
+	// and: mocking repository
 	called := false
 	repository := fakeRepository{fakeAdd: func(item shomu2.Item) error {
-		called = true
+		called = reflect.DeepEqual(param, item)
 		return nil
 	}}
+
+	// and: create command
 	command, err := shomu2.NewCommand("push", &repository)
 	if err != nil {
 		t.Fatal("unexpected error:", err)
 	}
 
-	// and
-	item := shomu2.Item{Value: "push!push!"}
-
 	// when
-	command.Run(item.Value)
+	command.Run(param.Value)
 
 	// then
 	if !called {
