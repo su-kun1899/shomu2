@@ -1,41 +1,29 @@
 package main
 
 import (
-	"fmt"
+	"github.com/su-kun1899/shomu2/shomu2"
 	"os"
 )
 
-// exitStatus defines statuses returned when command exit
-type exitStatus = int
-
-// Exit Statuses
-const (
-	success            exitStatus = 0
-	lackOfRequiredArgs exitStatus = 11
-	notExistCommand    exitStatus = 12
-)
-
-func runCmd(args []string) exitStatus {
-	// 引数のチェック
-	if len(args) != 2 {
-		fmt.Fprintf(os.Stderr, "[ERROR] required two arguments(command,item)\n")
-		return lackOfRequiredArgs
-	}
-
-	command := args[0]
-	item := args[1]
-	switch command {
-	case "add":
+// TODO こいつ自体も場所変えていいのかも。。
+func runCmd(args []string) shomu2.ExitStatus {
+	commandType := args[0]
+	// TODO ファイルの場所をユーザーディレクトリとかにする？
+	repository, err := shomu2.NewRepository("sample")
+	if err != nil {
 		// TODO
-		fmt.Fprintf(os.Stdout, "item: %v を追加するよ\n", item)
-	default:
-		fmt.Fprintf(os.Stderr, "[ERROR] not exist command: %s \n", command)
-		return notExistCommand
 	}
 
-	return success
+	command, err := shomu2.NewCommand(commandType, repository)
+	if err != nil {
+		// TODO
+	}
+
+	// TODO 可変長引数じゃなくて、配列にしたほうがよさげ
+	return command.Run(args[1])
 }
 
 func main() {
-	os.Exit(runCmd(os.Args[1:]))
+	status := runCmd(os.Args[1:])
+	os.Exit(status.Code)
 }

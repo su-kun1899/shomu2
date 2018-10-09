@@ -5,13 +5,13 @@ import (
 	"fmt"
 )
 
-// ExitCode defines statuses returned when command exit
-type ExitCode int
-
-const SUCCESS ExitCode = 0
+const (
+	Success = 0
+	Fail    = 1
+)
 
 type ExitStatus struct {
-	Code ExitCode
+	Code int
 }
 
 type Command interface {
@@ -27,7 +27,7 @@ func (command *Push) Run(options ...string) ExitStatus {
 	if err != nil {
 		// TODO エラーのステータスを返す
 	}
-	return ExitStatus{SUCCESS}
+	return ExitStatus{Success}
 }
 
 func NewCommand(name string, repository Repository) (Command, error) {
