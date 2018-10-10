@@ -19,8 +19,8 @@ func TestNewConfig(t *testing.T) {
 		if got.Home != home {
 			t.Errorf("Home = %v, want %v", got.Home, home)
 		}
-		if fileName := got.FileName(); fileName != home+"data" {
-			t.Errorf("DataFile = %v, want %v", fileName, home+"data")
+		if fileName := got.FileName(); fileName != home+".shomu2" {
+			t.Errorf("DataFile = %v, want %v", fileName, home+".shomu2")
 		}
 	})
 }

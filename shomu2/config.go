@@ -7,7 +7,7 @@ type Config struct {
 }
 
 func (c *Config) FileName() string {
-	return c.Home + "data"
+	return c.Home + ".shomu2"
 }
 
 func NewConfig() Config {
