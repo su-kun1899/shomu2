@@ -13,15 +13,14 @@ func TestNewConfig(t *testing.T) {
 		os.Setenv("SHOMU2_HOME", home)
 
 		// when
-		got, err := shomu2.NewConfig()
+		got := shomu2.NewConfig()
 
 		// then
-		if err != nil {
-			t.Error("unexpected error:", err)
-			return
-		}
 		if got.Home != home {
-			t.Errorf("Home = %v, want %v", got, home)
+			t.Errorf("Home = %v, want %v", got.Home, home)
+		}
+		if fileName := got.FileName(); fileName != home+"data" {
+			t.Errorf("DataFile = %v, want %v", fileName, home+"data")
 		}
 	})
 }

@@ -6,6 +6,10 @@ type Config struct {
 	Home string
 }
 
-func NewConfig() (Config, error) {
-	return Config{os.Getenv("SHOMU2_HOME")}, nil
+func (c *Config) FileName() string {
+	return c.Home + "data"
+}
+
+func NewConfig() Config {
+	return Config{os.Getenv("SHOMU2_HOME")}
 }
