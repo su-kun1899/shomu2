@@ -1,6 +1,7 @@
-package shomu2
+package shomu2_test
 
 import (
+	"github.com/su-kun1899/shomu2/shomu2"
 	"os"
 	"testing"
 )
@@ -12,7 +13,7 @@ func TestNewConfig(t *testing.T) {
 		os.Setenv("SHOMU2_HOME", home)
 
 		// when
-		got, err := NewConfig()
+		got, err := shomu2.NewConfig()
 
 		// then
 		if err != nil {
