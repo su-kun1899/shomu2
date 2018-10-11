@@ -15,15 +15,17 @@ type ExitStatus struct {
 }
 
 type Command interface {
-	Run(options ...string) ExitStatus
+	Run(args []string) ExitStatus
 }
 
 type Push struct {
 	repository Repository
 }
 
-func (command *Push) Run(options ...string) ExitStatus {
-	err := command.repository.Add(Item{Value: options[0]})
+func (command *Push) Run(args []string) ExitStatus {
+	// TODO optionのチェック
+
+	err := command.repository.Add(Item{Value: args[0]})
 	if err != nil {
 		// TODO エラーのステータスを返す
 	}

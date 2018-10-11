@@ -47,7 +47,7 @@ func TestPush_Run(t *testing.T) {
 	}
 
 	// when
-	exitStatus := command.Run(param.Value)
+	exitStatus := command.Run([]string{param.Value})
 
 	// then
 	if exitStatus.Code != shomu2.Success {

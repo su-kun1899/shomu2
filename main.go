@@ -19,8 +19,7 @@ func runCmd(args []string) int {
 		return shomu2.Fail
 	}
 
-	// TODO 可変長引数じゃなくて、配列にしたほうがよさげ
-	return command.Run(args[1]).Code
+	return command.Run(args[1:]).Code
 }
 
 func main() {
