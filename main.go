@@ -5,28 +5,24 @@ import (
 	"os"
 )
 
-// TODO こいつ自体も場所変えていいのかも。。
-func runCmd(args []string) shomu2.ExitStatus {
+func runCmd(args []string) int {
 	commandType := args[0]
 
 	config := shomu2.NewConfig()
 	repository, err := shomu2.NewRepository(config.FileName())
 	if err != nil {
-		// TODO
-		panic(err)
+		return shomu2.Fail
 	}
 
 	command, err := shomu2.NewCommand(commandType, repository)
 	if err != nil {
-		// TODO
-		panic(err)
+		return shomu2.Fail
 	}
 
 	// TODO 可変長引数じゃなくて、配列にしたほうがよさげ
-	return command.Run(args[1])
+	return command.Run(args[1]).Code
 }
 
 func main() {
-	status := runCmd(os.Args[1:])
-	os.Exit(status.Code)
+	os.Exit(runCmd(os.Args[1:]))
 }
