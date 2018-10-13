@@ -92,6 +92,7 @@ func (repository *fakeRepository) Add(item shomu2.Item) error {
 }
 
 func TestPush_Run(t *testing.T) {
+	callRepository := false
 	type fields struct {
 		repository shomu2.Repository
 	}
@@ -99,10 +100,11 @@ func TestPush_Run(t *testing.T) {
 		args []string
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   int
+		name           string
+		fields         fields
+		args           args
+		want           int
+		callRepository bool
 		// TODO errorも帰ってきてほしい
 	}{
 		{
@@ -113,7 +115,8 @@ func TestPush_Run(t *testing.T) {
 			args: args{
 				args: []string{},
 			},
-			want: shomu2.Fail,
+			want:           shomu2.Fail,
+			callRepository: false,
 		},
 		{
 			name: "Too many arguments error",
@@ -123,7 +126,8 @@ func TestPush_Run(t *testing.T) {
 			args: args{
 				args: []string{"foo", "bar"},
 			},
-			want: shomu2.Fail,
+			want:           shomu2.Fail,
+			callRepository: false,
 		},
 		{
 			name: "Repository's error",
@@ -137,18 +141,38 @@ func TestPush_Run(t *testing.T) {
 			args: args{
 				args: []string{"foo"},
 			},
-			want: shomu2.Fail,
+			want:           shomu2.Fail,
+			callRepository: false,
+		},
+		{
+			name: "Pushing item success",
+			fields: fields{
+				repository: &fakeRepository{
+					fakeAdd: func(item shomu2.Item) error {
+						callRepository = true
+						return nil
+					},
+				},
+			},
+			args: args{
+				args: []string{"foo"},
+			},
+			want:           shomu2.Success,
+			callRepository: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			callRepository = false
 			command, err := shomu2.NewCommand("push", tt.fields.repository)
 			if err != nil {
 				t.Fatal("unexpected error:", err)
 			}
-
 			if got := command.Run(tt.args.args).Code; !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Push.Run().Code = %v, want %v", got, tt.want)
+			}
+			if tt.callRepository != callRepository {
+				t.Errorf("Push.Run() call Repository = %v, want %v", callRepository, tt.callRepository)
 			}
 		})
 	}
