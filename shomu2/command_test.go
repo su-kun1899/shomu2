@@ -1,9 +1,10 @@
 package shomu2_test
 
 import (
-	"testing"
-	"github.com/su-kun1899/shomu2/shomu2"
 	"reflect"
+	"testing"
+
+	"github.com/su-kun1899/shomu2/shomu2"
 )
 
 func TestNewCommand_push(t *testing.T) {
@@ -29,7 +30,7 @@ func TestNewCommand_push(t *testing.T) {
 	})
 }
 
-func TestPush_Run(t *testing.T) {
+func TestPush_Run1(t *testing.T) {
 	// TODO テーブルテストにできる？
 	t.Run("Run push command", func(t *testing.T) {
 		// given
@@ -87,4 +88,43 @@ type fakeRepository struct {
 
 func (repository *fakeRepository) Add(item shomu2.Item) error {
 	return repository.fakeAdd(item)
+}
+
+func TestPush_Run(t *testing.T) {
+	type fields struct {
+		repository shomu2.Repository
+	}
+	type args struct {
+		args []string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   int
+		// TODO errorも帰ってきてほしい
+	}{
+		{
+			name: "Less argument error",
+			fields: fields{
+				repository: nil,
+			},
+			args: args{
+				args: nil,
+			},
+			want: shomu2.Fail,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			command, err := shomu2.NewCommand("push", tt.fields.repository)
+			if err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+
+			if got := command.Run(tt.args.args).Code; !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Push.Run() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }
