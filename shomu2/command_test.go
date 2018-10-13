@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/su-kun1899/shomu2/shomu2"
+	"errors"
 )
 
 func TestNewCommand_push(t *testing.T) {
@@ -121,6 +122,20 @@ func TestPush_Run(t *testing.T) {
 			},
 			args: args{
 				args: []string{"foo", "bar"},
+			},
+			want: shomu2.Fail,
+		},
+		{
+			name: "Repository's error",
+			fields: fields{
+				repository: &fakeRepository{
+					fakeAdd: func(item shomu2.Item) error {
+						return errors.New("repository's error")
+					},
+				},
+			},
+			args: args{
+				args: []string{"foo"},
 			},
 			want: shomu2.Fail,
 		},

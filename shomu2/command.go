@@ -34,7 +34,8 @@ func (command *Push) Run(args []string) ExitStatus {
 
 	err := command.repository.Add(Item{Value: itemValue})
 	if err != nil {
-		// TODO エラーのステータスを返す
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		return ExitStatus{Fail}
 	}
 	return ExitStatus{Success}
 }
