@@ -110,7 +110,17 @@ func TestPush_Run(t *testing.T) {
 				repository: nil,
 			},
 			args: args{
-				args: nil,
+				args: []string{},
+			},
+			want: shomu2.Fail,
+		},
+		{
+			name: "Too many arguments error",
+			fields: fields{
+				repository: nil,
+			},
+			args: args{
+				args: []string{"foo", "bar"},
 			},
 			want: shomu2.Fail,
 		},
@@ -123,7 +133,7 @@ func TestPush_Run(t *testing.T) {
 			}
 
 			if got := command.Run(tt.args.args).Code; !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Push.Run() = %v, want %v", got, tt.want)
+				t.Errorf("Push.Run().Code = %v, want %v", got, tt.want)
 			}
 		})
 	}
