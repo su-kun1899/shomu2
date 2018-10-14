@@ -22,7 +22,11 @@ func runCmd(args []string) int {
 		return shomu2.Fail
 	}
 
-	return command.Run(args[1:]).Code
+	code, err := command.Run(args[1:])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+	}
+	return code
 }
 
 func main() {
