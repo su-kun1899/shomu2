@@ -11,13 +11,7 @@ const (
 	Fail    = 1
 )
 
-type ExitStatus struct {
-	Code int
-}
-
 type Command interface {
-	// TODO 消す
-	Run1(args []string) ExitStatus
 	Run(args []string) (int, error)
 }
 
@@ -38,23 +32,6 @@ func (command *Push) Run(args []string) (int, error) {
 		return Fail, err
 	}
 	return Success, nil
-}
-
-// TODO 消す
-func (command *Push) Run1(args []string) ExitStatus {
-	// optionのチェック
-	if len(args) != 1 {
-		fmt.Fprintf(os.Stderr, "[ERROR] required 1 arguments(command,item)\n")
-		return ExitStatus{Fail}
-	}
-	itemValue := args[0]
-
-	err := command.repository.Add(Item{Value: itemValue})
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		return ExitStatus{Fail}
-	}
-	return ExitStatus{Success}
 }
 
 func NewCommand(name string, repository Repository) (Command, error) {
