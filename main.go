@@ -7,6 +7,11 @@ import (
 )
 
 func runCmd(args []string) int {
+	if len(args) == 0 {
+		fmt.Fprintf(os.Stderr, "shomu2 is a tool for trivial things.\n")
+		return 0
+	}
+
 	commandType := args[0]
 
 	config := shomu2.NewConfig()
