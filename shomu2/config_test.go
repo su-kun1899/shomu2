@@ -10,8 +10,8 @@ func TestNewConfig(t *testing.T) {
 	t.Run("test configuration", func(t *testing.T) {
 		// given
 		home := os.TempDir()
-		os.Setenv("SHOMU2_HOME", home)
-		defer os.Unsetenv("SHOMU2_HOME")
+		os.Setenv(shomu2.SHOMU2_HOME_ENV_KEY, home)
+		defer os.Unsetenv(shomu2.SHOMU2_HOME_ENV_KEY)
 
 		// when
 		got, err := shomu2.NewConfig()
