@@ -11,11 +11,16 @@ func TestNewConfig(t *testing.T) {
 		// given
 		home := os.TempDir()
 		os.Setenv("SHOMU2_HOME", home)
+		defer os.Unsetenv("SHOMU2_HOME")
 
 		// when
-		got := shomu2.NewConfig()
+		got, err := shomu2.NewConfig()
 
 		// then
+		if err != nil {
+			t.Error("unexpected error:", err)
+			return
+		}
 		if got.Home != home {
 			t.Errorf("Home = %v, want %v", got.Home, home)
 		}
@@ -23,4 +28,15 @@ func TestNewConfig(t *testing.T) {
 			t.Errorf("DataFile = %v, want %v", fileName, home+".shomu2")
 		}
 	})
+
+	t.Run("test configuration", func(t *testing.T) {
+		// when
+		_, err := shomu2.NewConfig()
+
+		// then
+		if err == nil {
+			t.Error("expected error did not occur")
+		}
+	})
+
 }

@@ -1,6 +1,9 @@
 package shomu2
 
-import "os"
+import (
+	"os"
+	"errors"
+)
 
 type Config struct {
 	Home string
@@ -10,7 +13,11 @@ func (c *Config) FileName() string {
 	return c.Home + ".shomu2"
 }
 
-func NewConfig() Config {
-	// TODO 環境変数が未設定の場合エラー
-	return Config{os.Getenv("SHOMU2_HOME")}
+func NewConfig() (*Config, error) {
+	home := os.Getenv("SHOMU2_HOME")
+	if home == "" {
+		return &Config{}, errors.New("shomu2 home is not configured")
+	}
+
+	return &Config{home}, nil
 }
