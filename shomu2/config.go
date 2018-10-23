@@ -3,6 +3,7 @@ package shomu2
 import (
 	"os"
 	"errors"
+	"path/filepath"
 )
 
 const SHOMU2_HOME_ENV_KEY string = "SHOMU2_HOME"
@@ -12,7 +13,7 @@ type Config struct {
 }
 
 func (c *Config) FileName() string {
-	return c.Home + ".shomu2"
+	return filepath.Join(c.Home, "data")
 }
 
 func NewConfig() (*Config, error) {
