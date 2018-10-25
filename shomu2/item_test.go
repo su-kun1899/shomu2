@@ -25,4 +25,6 @@ func TestFileItemRepository(t *testing.T) {
 	if !reflect.DeepEqual(got, nil) {
 		t.Errorf("FileItemRepository.Pop() = %v, want %v", got, tt.want)
 	}
+
+	// TODO when push a item
 }
