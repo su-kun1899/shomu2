@@ -5,38 +5,24 @@ import (
 	"testing"
 )
 
-func TestFileItemRepository_Pop(t *testing.T) {
-	type fields struct {
-		fileName string
+func TestFileItemRepository(t *testing.T) {
+	// given
+	fileName := "testdata/shomu2db"
+	repository, err := NewItemRepository(fileName)
+	if err != nil {
+		t.Error("unexpected error:", err)
+		return
 	}
-	tests := []struct {
-		name    string
-		fields  fields
-		want    *Item
-		wantErr bool
-	}{
-		{
-			name:    "No items",
-			fields:  fields{fileName: "testdata/shomu2db"},
-			want:    nil,
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			repository, err := NewItemRepository(tt.fields.fileName)
-			if err != nil {
-				t.Fatal("unexpected error:", err)
-			}
 
-			got, err := repository.Pop()
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FileItemRepository.Pop() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FileItemRepository.Pop() = %v, want %v", got, tt.want)
-			}
-		})
+	// when no items
+	got, err := repository.Pop()
+
+	// then
+	if err != nil {
+		t.Error("unexpected error:", err)
+		return
+	}
+	if !reflect.DeepEqual(got, nil) {
+		t.Errorf("FileItemRepository.Pop() = %v, want %v", got, tt.want)
 	}
 }
