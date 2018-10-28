@@ -1,14 +1,14 @@
-package shomu2
+package shomu2_test
 
 import (
-	"reflect"
 	"testing"
+	"github.com/su-kun1899/shomu2/shomu2"
 )
 
 func TestFileItemRepository(t *testing.T) {
 	// given
 	fileName := "testdata/shomu2db"
-	repository, err := NewItemRepository(fileName)
+	repository, err := shomu2.NewItemRepository(fileName)
 	if err != nil {
 		t.Error("unexpected error:", err)
 		return
@@ -22,8 +22,8 @@ func TestFileItemRepository(t *testing.T) {
 		t.Error("unexpected error:", err)
 		return
 	}
-	if !reflect.DeepEqual(got, nil) {
-		t.Errorf("FileItemRepository.Pop() = %v, want %v", got, tt.want)
+	if got != nil {
+		t.Errorf("FileItemRepository.Pop() = %v, want %v", got, nil)
 	}
 
 	// TODO when push a item
