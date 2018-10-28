@@ -8,6 +8,7 @@ type Item struct {
 
 type ItemRepository interface {
 	Pop() (*Item, error)
+	Push(item *Item) error
 }
 
 type FileItemRepository struct {
@@ -17,6 +18,11 @@ type FileItemRepository struct {
 func (*FileItemRepository) Pop() (*Item, error) {
 	//TODO "implement me"
 	return nil, nil
+}
+
+func (*FileItemRepository) Push(*Item) (error) {
+	//TODO "implement me"
+	return nil
 }
 
 // NewItemRepository is a constructor for ItemRepository
