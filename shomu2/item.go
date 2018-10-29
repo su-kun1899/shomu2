@@ -1,6 +1,11 @@
 package shomu2
 
-import "os"
+import (
+	"os"
+	"encoding/base64"
+	"fmt"
+	"bufio"
+)
 
 type Item struct {
 	Value string
@@ -15,14 +20,43 @@ type FileItemRepository struct {
 	fileName string
 }
 
-func (*FileItemRepository) Pop() (*Item, error) {
-	//TODO "implement me"
-	return nil, nil
+func (r *FileItemRepository) Pop() (*Item, error) {
+	fp, err := os.Open(r.fileName)
+	if err != nil {
+		return nil, err
+	}
+	defer fp.Close()
+
+	items := make([]*Item, 0)
+	scanner := bufio.NewScanner(fp)
+	for scanner.Scan() {
+		decoded, err := base64.URLEncoding.DecodeString(scanner.Text())
+		if err != nil {
+			return nil, err
+		}
+
+		items = append(items, &Item{string(decoded)})
+	}
+
+	if len(items) == 0 {
+		return nil, nil
+	}
+
+	// TODO 取り出したItemを消す
+	return items[len(items)-1 ], nil
 }
 
-func (*FileItemRepository) Push(*Item) (error) {
-	//TODO "implement me"
-	return nil
+func (r *FileItemRepository) Push(item *Item) (error) {
+	file, err := os.OpenFile(r.fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoded := base64.URLEncoding.EncodeToString([]byte(item.Value))
+	_, err = file.WriteString(fmt.Sprintf("%s\n", encoded))
+
+	return err
 }
 
 // NewItemRepository is a constructor for ItemRepository

@@ -8,7 +8,7 @@ import (
 
 func TestFileItemRepository(t *testing.T) {
 	// given
-	fileName := "testdata/shomu2db"
+	fileName := "testdata/items"
 	repository, err := shomu2.NewItemRepository(fileName)
 	if err != nil {
 		t.Error("unexpected error:", err)
