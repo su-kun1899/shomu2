@@ -18,12 +18,13 @@ type ItemRepository interface {
 
 type FileItemRepository struct {
 	fileName string
+	items    []*Item
 }
 
-func (r *FileItemRepository) Pop() (*Item, error) {
+func (r *FileItemRepository) load() error {
 	fp, err := os.Open(r.fileName)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer fp.Close()
 
@@ -32,18 +33,23 @@ func (r *FileItemRepository) Pop() (*Item, error) {
 	for scanner.Scan() {
 		decoded, err := base64.URLEncoding.DecodeString(scanner.Text())
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		items = append(items, &Item{string(decoded)})
 	}
+	r.items = items
 
-	if len(items) == 0 {
+	return nil
+}
+
+func (r *FileItemRepository) Pop() (*Item, error) {
+	if len(r.items) == 0 {
 		return nil, nil
 	}
 
 	// TODO 取り出したItemを消す
-	return items[len(items)-1 ], nil
+	return r.items[len(r.items)-1 ], nil
 }
 
 func (r *FileItemRepository) Push(item *Item) (error) {
@@ -71,6 +77,7 @@ func NewItemRepository(fileName string) (ItemRepository, error) {
 		}
 		defer file.Close()
 	}
+	repository.load()
 
 	return repository, nil
 }
