@@ -43,22 +43,10 @@ func (r *FileItemRepository) load() error {
 	return nil
 }
 
-func (r *FileItemRepository) Pop() (*Item, error) {
-	if len(r.items) == 0 {
-		return nil, nil
-	}
-
-	item := r.items[len(r.items)-1 ]
-
-	if len(r.items) == 1 {
-		r.items = nil
-	} else {
-		r.items = r.items[:len(r.items)-2]
-	}
-
+func (r *FileItemRepository) save() error {
 	file, err := os.OpenFile(r.fileName, os.O_TRUNC|os.O_WRONLY, os.ModeAppend)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer file.Close()
 
@@ -67,12 +55,30 @@ func (r *FileItemRepository) Pop() (*Item, error) {
 		encoded := base64.URLEncoding.EncodeToString([]byte(it.Value))
 		s += fmt.Sprintf("%s\n", encoded)
 	}
+
 	_, err = file.WriteString(s)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	// TODO 取り出したItemを消す
+	return nil
+}
+
+func (r *FileItemRepository) Pop() (*Item, error) {
+	if len(r.items) == 0 {
+		return nil, nil
+	}
+	item := r.items[len(r.items)-1 ]
+
+	// 取り出したItemを消す
+	if len(r.items) == 1 {
+		r.items = nil
+	} else {
+		r.items = r.items[:len(r.items)-2]
+	}
+
+	r.save()
+
 	return item, nil
 }
 
