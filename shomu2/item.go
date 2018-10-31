@@ -68,31 +68,32 @@ func (r *FileItemRepository) Pop() (*Item, error) {
 	if len(r.items) == 0 {
 		return nil, nil
 	}
+
 	item := r.items[len(r.items)-1 ]
-
 	// 取り出したItemを消す
-	if len(r.items) == 1 {
-		r.items = nil
-	} else {
-		r.items = r.items[:len(r.items)-2]
-	}
+	r.items = r.items[:max(0, len(r.items)-2)]
 
-	r.save()
+	err := r.save()
+	if err != nil {
+		return nil, err
+	}
 
 	return item, nil
 }
 
+func max(x, y int) int {
+	if x > y {
+		return x
+	}
+	return y
+}
+
 func (r *FileItemRepository) Push(item *Item) (error) {
-	file, err := os.OpenFile(r.fileName, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	r.items = append(r.items, item)
+	err := r.save()
 	if err != nil {
 		return err
 	}
-	defer file.Close()
-
-	encoded := base64.URLEncoding.EncodeToString([]byte(item.Value))
-	_, err = file.WriteString(fmt.Sprintf("%s\n", encoded))
-
-	r.items = append(r.items, item)
 
 	return err
 }
