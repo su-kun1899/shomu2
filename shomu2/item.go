@@ -71,6 +71,7 @@ func NewItemRepository(fileName string) (ItemRepository, error) {
 	// TODO テストの移行
 	// create file if not exists
 	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		// TODO O_CREATE使えば、意識しなくて良い？
 		file, err := os.Create(fileName)
 		if err != nil {
 			return repository, err
