@@ -21,28 +21,6 @@ type FileItemRepository struct {
 	items    []*Item
 }
 
-func (r *FileItemRepository) load() error {
-	fp, err := os.Open(r.fileName)
-	if err != nil {
-		return err
-	}
-	defer fp.Close()
-
-	items := make([]*Item, 0)
-	scanner := bufio.NewScanner(fp)
-	for scanner.Scan() {
-		decoded, err := base64.URLEncoding.DecodeString(scanner.Text())
-		if err != nil {
-			return err
-		}
-
-		items = append(items, &Item{string(decoded)})
-	}
-	r.items = items
-
-	return nil
-}
-
 func (r *FileItemRepository) save() error {
 	file, err := os.OpenFile(r.fileName, os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
@@ -100,8 +78,22 @@ func (r *FileItemRepository) Push(item *Item) (error) {
 
 // NewItemRepository is a constructor for ItemRepository
 func NewItemRepository(fileName string) (ItemRepository, error) {
-	repository := &FileItemRepository{fileName: fileName}
-	repository.load()
+	// load items
+	fp, err := os.OpenFile(fileName, os.O_RDONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return nil, err
+	}
+	defer fp.Close()
 
-	return repository, nil
+	items := make([]*Item, 0)
+	scanner := bufio.NewScanner(fp)
+	for scanner.Scan() {
+		decoded, err := base64.URLEncoding.DecodeString(scanner.Text())
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, &Item{string(decoded)})
+	}
+
+	return &FileItemRepository{fileName: fileName, items: items}, nil
 }
