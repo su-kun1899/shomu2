@@ -5,11 +5,12 @@ import (
 	"github.com/su-kun1899/shomu2/shomu2"
 	"reflect"
 	"os"
+	"path/filepath"
 )
 
 func TestFileItemRepository(t *testing.T) {
 	// given
-	fileName := os.TempDir() + "items"
+	fileName := filepath.Join(os.TempDir(), "items")
 	defer func() {
 		if err := os.Remove(fileName); err != nil {
 			t.Error("unexpected error:", err)
