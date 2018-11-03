@@ -44,7 +44,7 @@ func (r *FileItemRepository) load() error {
 }
 
 func (r *FileItemRepository) save() error {
-	file, err := os.OpenFile(r.fileName, os.O_TRUNC|os.O_WRONLY, os.ModeAppend)
+	file, err := os.OpenFile(r.fileName, os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
 	}
