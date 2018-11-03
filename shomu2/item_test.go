@@ -4,11 +4,19 @@ import (
 	"testing"
 	"github.com/su-kun1899/shomu2/shomu2"
 	"reflect"
+	"os"
 )
 
 func TestFileItemRepository(t *testing.T) {
 	// given
-	fileName := "testdata/items"
+	fileName := os.TempDir() + "items"
+	defer func() {
+		if err := os.Remove(fileName); err != nil {
+			t.Error("unexpected error:", err)
+			return
+		}
+	}()
+
 	repository, err := shomu2.NewItemRepository(fileName)
 	if err != nil {
 		t.Error("unexpected error:", err)

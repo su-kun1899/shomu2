@@ -44,7 +44,7 @@ func (r *FileItemRepository) load() error {
 }
 
 func (r *FileItemRepository) save() error {
-	file, err := os.OpenFile(r.fileName, os.O_TRUNC|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(r.fileName, os.O_TRUNC|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
@@ -101,16 +101,6 @@ func (r *FileItemRepository) Push(item *Item) (error) {
 // NewItemRepository is a constructor for ItemRepository
 func NewItemRepository(fileName string) (ItemRepository, error) {
 	repository := &FileItemRepository{fileName: fileName}
-	// TODO テストの移行
-	// create file if not exists
-	if _, err := os.Stat(fileName); os.IsNotExist(err) {
-		// TODO O_CREATE使えば、意識しなくて良い？
-		file, err := os.Create(fileName)
-		if err != nil {
-			return repository, err
-		}
-		defer file.Close()
-	}
 	repository.load()
 
 	return repository, nil
