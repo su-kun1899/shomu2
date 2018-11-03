@@ -29,7 +29,7 @@ func TestFileItemRepository(t *testing.T) {
 		return
 	}
 
-	// TODO when push a item
+	// when push a item
 	item := shomu2.Item{Value: "new item"}
 	err = repository.Push(&item)
 
@@ -39,7 +39,7 @@ func TestFileItemRepository(t *testing.T) {
 		return
 	}
 
-	// when pop item
+	// and pop item
 	got, err = repository.Pop()
 
 	// then
