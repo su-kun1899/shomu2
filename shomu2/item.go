@@ -11,6 +11,39 @@ type Item struct {
 	Value string
 }
 
+type Items interface {
+	Pop() (*Item, error)
+	Push(item *Item) error
+}
+
+// TODO Repositoryにする
+type FileRepository interface {
+	FindAll() ([]*Item, error)
+	SaveAll([]*Item) error
+}
+
+type FileItems struct {
+	values []*Item
+	// TODO ItemRepositoryにする
+	repo FileRepository
+}
+
+func (items *FileItems) Pop() (*Item, error) {
+	panic("implement me")
+}
+
+func (*FileItems) Push(item *Item) error {
+	panic("implement me")
+}
+
+func NewItems(repo FileRepository) (Items, error) {
+	items, err := repo.FindAll()
+	if err != nil {
+		return nil, err
+	}
+	return &FileItems{values: items, repo: repo}, nil
+}
+
 type ItemRepository interface {
 	Pop() (*Item, error)
 	Push(item *Item) error
