@@ -101,12 +101,7 @@ func max(x, y int) int {
 
 func (r *FileItemRepository) Push(item *Item) (error) {
 	r.items = append(r.items, item)
-	err := r.save()
-	if err != nil {
-		return err
-	}
-
-	return err
+	return r.save()
 }
 
 // NewItemRepository is a constructor for ItemRepository
