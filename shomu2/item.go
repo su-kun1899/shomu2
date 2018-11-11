@@ -11,9 +11,29 @@ type Item struct {
 	Value string
 }
 
-type Items interface {
-	Pop() (*Item, error)
-	Push(item *Item) error
+type Items struct {
+	Values []*Item
+}
+
+func NewItems(fileName string) (*Items, error) {
+	// load items
+	fp, err := os.OpenFile(fileName, os.O_RDONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return nil, err
+	}
+	defer fp.Close()
+
+	items := make([]*Item, 0)
+	scanner := bufio.NewScanner(fp)
+	for scanner.Scan() {
+		decoded, err := base64.URLEncoding.DecodeString(scanner.Text())
+		if err != nil {
+			return nil, err
+		}
+		items = append(items, &Item{string(decoded)})
+	}
+
+	return &Items{Values: items}, nil
 }
 
 // TODO Repositoryにする
@@ -34,14 +54,6 @@ func (items *FileItems) Pop() (*Item, error) {
 
 func (*FileItems) Push(item *Item) error {
 	panic("implement me")
-}
-
-func NewItems(repo FileRepository) (Items, error) {
-	items, err := repo.FindAll()
-	if err != nil {
-		return nil, err
-	}
-	return &FileItems{values: items, repo: repo}, nil
 }
 
 type ItemRepository interface {
