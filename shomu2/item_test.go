@@ -1,6 +1,7 @@
 package shomu2_test
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -68,6 +69,13 @@ func TestFileItemRepository(t *testing.T) {
 }
 
 func TestNewItems(t *testing.T) {
+	tempDir, err := ioutil.TempDir("", "TestNewItems")
+	if err != nil {
+		t.Error("unexpected error:", err)
+		return
+	}
+	defer os.RemoveAll(tempDir)
+
 	type args struct {
 		fileName string
 	}
@@ -80,6 +88,12 @@ func TestNewItems(t *testing.T) {
 		{
 			name:    "Empty file",
 			args:    args{fileName: filepath.Join("testdata", "empty")},
+			want:    []*shomu2.Item{},
+			wantErr: false,
+		},
+		{
+			name:    "New file",
+			args:    args{fileName: filepath.Join(tempDir, "tmpfile")},
 			want:    []*shomu2.Item{},
 			wantErr: false,
 		},
