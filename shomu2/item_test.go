@@ -10,27 +10,19 @@ import (
 	"github.com/su-kun1899/shomu2/shomu2"
 )
 
-func TestFileItemRepository(t *testing.T) {
-	// TODO このケースはさよならかな。。
-	t.Skip()
-
+func TestItems(t *testing.T) {
 	// given
 	fileName := filepath.Join(os.TempDir(), "items")
-	defer func() {
-		if err := os.Remove(fileName); err != nil {
-			t.Error("unexpected error:", err)
-			return
-		}
-	}()
+	defer os.Remove(fileName)
 
-	repository, err := shomu2.NewItemRepository(fileName)
+	items, err := shomu2.NewItems(fileName)
 	if err != nil {
 		t.Error("unexpected error:", err)
 		return
 	}
 
 	// when no items
-	got, err := repository.Pop()
+	got, err := items.Pop()
 
 	// then
 	if err != nil {
@@ -45,7 +37,7 @@ func TestFileItemRepository(t *testing.T) {
 
 	// when push a item
 	item := shomu2.Item{Value: "new item"}
-	err = repository.Push(&item)
+	err = items.Push(&item)
 
 	// then
 	if err != nil {
@@ -54,7 +46,7 @@ func TestFileItemRepository(t *testing.T) {
 	}
 
 	// and pop item
-	got, err = repository.Pop()
+	got, err = items.Pop()
 
 	// then
 	if err != nil {
@@ -63,7 +55,7 @@ func TestFileItemRepository(t *testing.T) {
 	}
 	want = &item
 	if !reflect.DeepEqual(got, want) {
-		t.Errorf("FileItemRepository.Pop() = %v, want %v", got, want)
+		t.Errorf("Items.Pop() = %v, want %v", got, want)
 		return
 	}
 }
