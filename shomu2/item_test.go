@@ -89,6 +89,17 @@ func TestNewItems(t *testing.T) {
 			want:    []*shomu2.Item{},
 			wantErr: false,
 		},
+		{
+			name: "Existed file",
+			args: args{fileName: filepath.Join("testdata", "data")},
+			want: []*shomu2.Item{
+				{Value: "Hello!"},
+				{Value: "My name is shomu2."},
+				{Value: "Nice to meet you."},
+				{Value: "Good-bye!"},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,9 +108,21 @@ func TestNewItems(t *testing.T) {
 				t.Errorf("NewItems() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if values := got.Values; !reflect.DeepEqual(values, tt.want) {
+			if values := got.Values; !equal(t, values, tt.want) {
 				t.Errorf("NewItems() = %v, want %v", values, tt.want)
 			}
 		})
 	}
+}
+
+func equal(t *testing.T, values1, values2 []*shomu2.Item) bool {
+	t.Helper()
+
+	for i := range values1 {
+		if *values1[i] != *values2[i] {
+			return false
+		}
+	}
+
+	return true
 }
