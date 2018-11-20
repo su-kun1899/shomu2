@@ -12,18 +12,22 @@ type Item struct {
 }
 
 type Items struct {
-	Values   []*Item
+	values   []*Item
 	fileName string
 }
 
+func (items *Items) List() []*Item {
+	return items.values
+}
+
 func (items *Items) Pop() (*Item, error) {
-	if len(items.Values) == 0 {
+	if len(items.values) == 0 {
 		return nil, nil
 	}
 
-	item := items.Values[len(items.Values)-1 ]
+	item := items.values[len(items.values)-1 ]
 	// 取り出したItemを消す
-	items.Values = items.Values[:max(0, len(items.Values)-2)]
+	items.values = items.values[:max(0, len(items.values)-2)]
 
 	err := items.save()
 	if err != nil {
@@ -34,7 +38,7 @@ func (items *Items) Pop() (*Item, error) {
 }
 
 func (items *Items) Push(item *Item) error {
-	items.Values = append(items.Values, item)
+	items.values = append(items.values, item)
 	return items.save()
 }
 
@@ -46,7 +50,7 @@ func (items *Items) save() error {
 	defer file.Close()
 
 	s := ""
-	for _, it := range items.Values {
+	for _, it := range items.values {
 		encoded := base64.URLEncoding.EncodeToString([]byte(it.Value))
 		s += fmt.Sprintf("%s\n", encoded)
 	}
@@ -78,7 +82,7 @@ func NewItems(fileName string) (*Items, error) {
 		items = append(items, &Item{string(decoded)})
 	}
 
-	return &Items{Values: items, fileName: fileName}, nil
+	return &Items{values: items, fileName: fileName}, nil
 }
 
 func max(x, y int) int {

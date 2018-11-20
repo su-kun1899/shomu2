@@ -108,7 +108,7 @@ func TestNewItems(t *testing.T) {
 				t.Errorf("NewItems() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if values := got.Values; !equal(t, values, tt.want) {
+			if values := got.List(); !equal(t, values, tt.want) {
 				t.Errorf("NewItems() = %v, want %v", values, tt.want)
 			}
 		})
