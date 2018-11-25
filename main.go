@@ -8,7 +8,7 @@ import (
 
 func runCmd(args []string) int {
 	if len(args) == 0 {
-		fmt.Fprintf(os.Stderr, "shomu2 is a tool for trivial things.\n")
+		fmt.Fprintf(os.Stdout, "shomu2 is a tool for trivial things.\n")
 		return 0
 	}
 
