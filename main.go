@@ -14,19 +14,20 @@ func runCmd(args []string) int {
 
 	commandType := args[0]
 
-	config, err := shomu2.NewConfig()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		return shomu2.Fail
-	}
+	//config, err := shomu2.NewConfig()
+	//if err != nil {
+	//	fmt.Fprintf(os.Stderr, "%v\n", err)
+	//	return shomu2.Fail
+	//}
 
-	repository, err := shomu2.NewRepository(config.FileName())
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		return shomu2.Fail
-	}
+	//repository, err := shomu2.NewRepository(config.FileName())
+	//if err != nil {
+	//	fmt.Fprintf(os.Stderr, "%v\n", err)
+	//	return shomu2.Fail
+	//}
 
-	command, err := shomu2.NewCommand(commandType, repository)
+	// TODO
+	command, err := shomu2.NewCommand(commandType, nil)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		return shomu2.Fail
