@@ -1,6 +1,7 @@
 package shomu2_test
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 
@@ -68,42 +69,42 @@ func TestPush_Run(t *testing.T) {
 			want:    shomu2.Fail,
 			wantErr: true,
 		},
-		//{
-		//	name: "Repository's error",
-		//	fields: fields{
-		//		data: &fakeData{
-		//			fakePush: func(item *shomu2.Item) error {
-		//				return errors.New("data's error")
-		//			},
-		//		},
-		//	},
-		//	args: args{
-		//		args: []string{"foo"},
-		//	},
-		//	want:    shomu2.Fail,
-		//	wantErr: true,
-		//},
-		//{
-		//	name: "Pushing item success",
-		//	fields: fields{
-		//		data: &fakeData{
-		//			fakePush: func(item *shomu2.Item) error {
-		//				called = true
-		//				return nil
-		//			},
-		//		},
-		//	},
-		//	args: args{
-		//		args: []string{"foo"},
-		//	},
-		//	called: true,
-		//	want:   shomu2.Success,
-		//},
+		{
+			name: "Command error",
+			fields: fields{
+				data: &fakeData{
+					fakePush: func(item *shomu2.Item) error {
+						return errors.New("command error")
+					},
+				},
+			},
+			args: args{
+				args: []string{"foo"},
+			},
+			want:    shomu2.Fail,
+			wantErr: true,
+		},
+		{
+			name: "Pushing item success",
+			fields: fields{
+				data: &fakeData{
+					fakePush: func(item *shomu2.Item) error {
+						called = true
+						return nil
+					},
+				},
+			},
+			args: args{
+				args: []string{"foo"},
+			},
+			called: true,
+			want:   shomu2.Success,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			called = false
-			command, err := shomu2.NewCommand("push", nil)
+			command, err := shomu2.NewCommand("push", tt.fields.data)
 			if err != nil {
 				t.Fatal("unexpected error:", err)
 			}
