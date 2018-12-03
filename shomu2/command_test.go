@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"errors"
 	"github.com/su-kun1899/shomu2/shomu2"
 )
 
@@ -32,27 +31,25 @@ func TestNewCommand_push(t *testing.T) {
 }
 
 func TestPush_Run(t *testing.T) {
-	// TODO 書き換え
-	t.Skip()
-	callRepository := false
+	called := false
 	type fields struct {
-		repository shomu2.Repository
+		data shomu2.Data
 	}
 	type args struct {
 		args []string
 	}
 	tests := []struct {
-		name           string
-		fields         fields
-		args           args
-		callRepository bool
-		want           int
-		wantErr        bool
+		name    string
+		fields  fields
+		args    args
+		called  bool
+		want    int
+		wantErr bool
 	}{
 		{
 			name: "Less argument error",
 			fields: fields{
-				repository: nil,
+				data: nil,
 			},
 			args: args{
 				args: []string{},
@@ -63,7 +60,7 @@ func TestPush_Run(t *testing.T) {
 		{
 			name: "Too many arguments error",
 			fields: fields{
-				repository: nil,
+				data: nil,
 			},
 			args: args{
 				args: []string{"foo", "bar"},
@@ -71,41 +68,41 @@ func TestPush_Run(t *testing.T) {
 			want:    shomu2.Fail,
 			wantErr: true,
 		},
-		{
-			name: "Repository's error",
-			fields: fields{
-				repository: &fakeRepository{
-					fakeAdd: func(item shomu2.Item) error {
-						return errors.New("repository's error")
-					},
-				},
-			},
-			args: args{
-				args: []string{"foo"},
-			},
-			want:    shomu2.Fail,
-			wantErr: true,
-		},
-		{
-			name: "Pushing item success",
-			fields: fields{
-				repository: &fakeRepository{
-					fakeAdd: func(item shomu2.Item) error {
-						callRepository = true
-						return nil
-					},
-				},
-			},
-			args: args{
-				args: []string{"foo"},
-			},
-			callRepository: true,
-			want:           shomu2.Success,
-		},
+		//{
+		//	name: "Repository's error",
+		//	fields: fields{
+		//		data: &fakeData{
+		//			fakePush: func(item *shomu2.Item) error {
+		//				return errors.New("data's error")
+		//			},
+		//		},
+		//	},
+		//	args: args{
+		//		args: []string{"foo"},
+		//	},
+		//	want:    shomu2.Fail,
+		//	wantErr: true,
+		//},
+		//{
+		//	name: "Pushing item success",
+		//	fields: fields{
+		//		data: &fakeData{
+		//			fakePush: func(item *shomu2.Item) error {
+		//				called = true
+		//				return nil
+		//			},
+		//		},
+		//	},
+		//	args: args{
+		//		args: []string{"foo"},
+		//	},
+		//	called: true,
+		//	want:   shomu2.Success,
+		//},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			callRepository = false
+			called = false
 			command, err := shomu2.NewCommand("push", nil)
 			if err != nil {
 				t.Fatal("unexpected error:", err)
@@ -114,20 +111,11 @@ func TestPush_Run(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Push.Run() = %v, want %v", got, tt.want)
 			}
-			if tt.callRepository != callRepository {
-				t.Errorf("Push.Run() call Repository = %v, want %v", callRepository, tt.callRepository)
+			if tt.called != called {
+				t.Errorf("Push.Run() call Repository = %v, want %v", called, tt.called)
 			}
 		})
 	}
-}
-
-type fakeRepository struct {
-	shomu2.Repository
-	fakeAdd func(item shomu2.Item) error
-}
-
-func (repository *fakeRepository) Add(item shomu2.Item) error {
-	return repository.fakeAdd(item)
 }
 
 type fakeData struct {
