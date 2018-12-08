@@ -16,10 +16,10 @@ type Command interface {
 }
 
 type Push struct {
-	data Data
+	repository ItemRepository
 }
 
-type Data interface {
+type ItemRepository interface {
 	Push(item *Item) error
 	Pop() (*Item, error)
 }
@@ -31,7 +31,7 @@ func (command *Push) Run(args []string) (int, error) {
 	}
 	itemValue := args[0]
 
-	err := command.data.Push(&Item{Value: itemValue})
+	err := command.repository.Push(&Item{Value: itemValue})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		return Fail, err
@@ -39,10 +39,10 @@ func (command *Push) Run(args []string) (int, error) {
 	return Success, nil
 }
 
-func NewCommand(name string, data Data) (Command, error) {
+func NewCommand(name string, data ItemRepository) (Command, error) {
 	switch name {
 	case "push":
-		return &Push{data: data}, nil
+		return &Push{repository: data}, nil
 	default:
 		return nil, errors.New(fmt.Sprintf("command \"%s\" is not exist", name))
 	}

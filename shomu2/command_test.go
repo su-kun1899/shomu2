@@ -34,7 +34,7 @@ func TestNewCommand_push(t *testing.T) {
 func TestPush_Run(t *testing.T) {
 	called := false
 	type fields struct {
-		data shomu2.Data
+		data shomu2.ItemRepository
 	}
 	type args struct {
 		args []string
@@ -120,7 +120,7 @@ func TestPush_Run(t *testing.T) {
 }
 
 type fakeData struct {
-	shomu2.Data
+	shomu2.ItemRepository
 	fakePush func(item *shomu2.Item) error
 }
 
