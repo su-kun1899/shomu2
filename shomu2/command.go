@@ -15,13 +15,13 @@ type Command interface {
 	Run(args []string) (int, error)
 }
 
-type Push struct {
-	repository ItemRepository
-}
-
 type ItemRepository interface {
 	Push(item *Item) error
 	Pop() (*Item, error)
+}
+
+type Push struct {
+	repository ItemRepository
 }
 
 func (command *Push) Run(args []string) (int, error) {
