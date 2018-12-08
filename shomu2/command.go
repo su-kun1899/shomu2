@@ -19,7 +19,6 @@ type Push struct {
 	data Data
 }
 
-// TODO 名前
 type Data interface {
 	Push(item *Item) error
 	Pop() (*Item, error)
