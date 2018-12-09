@@ -8,7 +8,7 @@ import (
 	"github.com/su-kun1899/shomu2/shomu2"
 )
 
-func TestNewCommand_push(t *testing.T) {
+func TestNewCommand_Push(t *testing.T) {
 	t.Run("create push command", func(t *testing.T) {
 		// when
 		command, err := shomu2.NewCommand("push", &fakeData{})
