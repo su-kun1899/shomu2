@@ -13,7 +13,7 @@ func TestNewCommand_Push(t *testing.T) {
 		// when
 		command, err := shomu2.NewCommand("push", &fakeData{})
 		if err != nil {
-			t.Error("unexpected error:", err)
+			t.Fatal("unexpected error:", err)
 		}
 
 		// then
@@ -27,6 +27,21 @@ func TestNewCommand_Push(t *testing.T) {
 		_, err := shomu2.NewCommand("foo", &fakeData{})
 		if err == nil {
 			t.Error("expected error did not occur")
+		}
+	})
+}
+
+func TestNewCommand_Pop(t *testing.T) {
+	t.Run("create pop command", func(t *testing.T) {
+		// when
+		command, err := shomu2.NewCommand("pop", &fakeData{})
+		if err != nil {
+			t.Fatal("unexpected error:", err)
+		}
+
+		// then
+		if _, ok := command.(*shomu2.Pop); !ok {
+			t.Errorf("command is %v, want %s", reflect.ValueOf(command).Type(), "*shomu2.Pop")
 		}
 	})
 }

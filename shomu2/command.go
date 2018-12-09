@@ -39,10 +39,20 @@ func (command *Push) Run(args []string) (int, error) {
 	return Success, nil
 }
 
+type Pop struct {
+	repository ItemRepository
+}
+
+func (*Pop) Run(args []string) (int, error) {
+	panic("implement me")
+}
+
 func NewCommand(name string, data ItemRepository) (Command, error) {
 	switch name {
 	case "push":
 		return &Push{repository: data}, nil
+	case "pop":
+		return &Pop{repository: data}, nil
 	default:
 		return nil, errors.New(fmt.Sprintf("command \"%s\" is not exist", name))
 	}
