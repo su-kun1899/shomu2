@@ -8,6 +8,7 @@ import (
 	"github.com/su-kun1899/shomu2/shomu2"
 )
 
+// TODO パラメータライズ度テストにしたい
 func TestNewCommand_Push(t *testing.T) {
 	t.Run("create push command", func(t *testing.T) {
 		// when
