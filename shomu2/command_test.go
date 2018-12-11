@@ -12,7 +12,7 @@ import (
 func TestNewCommand_Push(t *testing.T) {
 	t.Run("create push command", func(t *testing.T) {
 		// when
-		command, err := shomu2.NewCommand("push", &fakeData{})
+		command, err := shomu2.NewCommand("push", &fakeRepository{})
 		if err != nil {
 			t.Fatal("unexpected error:", err)
 		}
@@ -25,7 +25,7 @@ func TestNewCommand_Push(t *testing.T) {
 
 	t.Run("not exists command", func(t *testing.T) {
 		// when-then
-		_, err := shomu2.NewCommand("foo", &fakeData{})
+		_, err := shomu2.NewCommand("foo", &fakeRepository{})
 		if err == nil {
 			t.Error("expected error did not occur")
 		}
@@ -35,7 +35,7 @@ func TestNewCommand_Push(t *testing.T) {
 func TestNewCommand_Pop(t *testing.T) {
 	t.Run("create pop command", func(t *testing.T) {
 		// when
-		command, err := shomu2.NewCommand("pop", &fakeData{})
+		command, err := shomu2.NewCommand("pop", &fakeRepository{})
 		if err != nil {
 			t.Fatal("unexpected error:", err)
 		}
@@ -88,7 +88,7 @@ func TestPush_Run(t *testing.T) {
 		{
 			name: "Command error",
 			fields: fields{
-				data: &fakeData{
+				data: &fakeRepository{
 					fakePush: func(item *shomu2.Item) error {
 						return errors.New("command error")
 					},
@@ -103,7 +103,7 @@ func TestPush_Run(t *testing.T) {
 		{
 			name: "Pushing item success",
 			fields: fields{
-				data: &fakeData{
+				data: &fakeRepository{
 					fakePush: func(item *shomu2.Item) error {
 						called = true
 						return nil
@@ -135,11 +135,11 @@ func TestPush_Run(t *testing.T) {
 	}
 }
 
-type fakeData struct {
+type fakeRepository struct {
 	shomu2.ItemRepository
 	fakePush func(item *shomu2.Item) error
 }
 
-func (f *fakeData) Push(item *shomu2.Item) error {
+func (f *fakeRepository) Push(item *shomu2.Item) error {
 	return f.fakePush(item)
 }
