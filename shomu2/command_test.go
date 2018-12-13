@@ -8,21 +8,38 @@ import (
 	"github.com/su-kun1899/shomu2/shomu2"
 )
 
+func TestNewCommand(t *testing.T) {
+	type args struct {
+		cmdName    string
+		repository shomu2.ItemRepository
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantType reflect.Type
+	}{
+		{
+			name:     "create push command",
+			args:     args{cmdName: "push", repository: &fakeRepository{}},
+			wantType: reflect.TypeOf(&shomu2.Push{}),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := shomu2.NewCommand(tt.args.cmdName, tt.args.repository)
+			if err != nil {
+				t.Fatal("unexpected error:", err)
+			}
+
+			if gotType := reflect.TypeOf(got); gotType != tt.wantType {
+				t.Errorf("NewCommand() Type = %v, want %v", gotType, tt.wantType)
+			}
+		})
+	}
+}
+
 // TODO パラメータライズ度テストにしたい
 func TestNewCommand_Push(t *testing.T) {
-	t.Run("create push command", func(t *testing.T) {
-		// when
-		command, err := shomu2.NewCommand("push", &fakeRepository{})
-		if err != nil {
-			t.Fatal("unexpected error:", err)
-		}
-
-		// then
-		if _, ok := command.(*shomu2.Push); !ok {
-			t.Errorf("command is not push command: %v", command)
-		}
-	})
-
 	t.Run("not exists command", func(t *testing.T) {
 		// when-then
 		_, err := shomu2.NewCommand("foo", &fakeRepository{})
