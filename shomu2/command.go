@@ -47,6 +47,7 @@ func (*Pop) Run(args []string) (int, error) {
 	panic("implement me")
 }
 
+// TODO 引数名Rename
 func NewCommand(name string, data ItemRepository) (Command, error) {
 	switch name {
 	case "push":
