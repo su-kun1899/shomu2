@@ -57,7 +57,7 @@ func TestNewCommand_Push(t *testing.T) {
 func TestPush_Run(t *testing.T) {
 	called := false
 	type fields struct {
-		data shomu2.ItemRepository
+		repo shomu2.ItemRepository
 	}
 	type args struct {
 		args []string
@@ -68,34 +68,31 @@ func TestPush_Run(t *testing.T) {
 		args    args
 		called  bool
 		want    int
-		wantErr bool
 	}{
 		{
 			name: "Less argument error",
 			fields: fields{
-				data: nil,
+				repo: nil,
 			},
 			args: args{
 				args: []string{},
 			},
-			want:    shomu2.Fail,
-			wantErr: true,
+			want: shomu2.Fail,
 		},
 		{
 			name: "Too many arguments error",
 			fields: fields{
-				data: nil,
+				repo: nil,
 			},
 			args: args{
 				args: []string{"foo", "bar"},
 			},
-			want:    shomu2.Fail,
-			wantErr: true,
+			want: shomu2.Fail,
 		},
 		{
 			name: "Command error",
 			fields: fields{
-				data: &fakeRepository{
+				repo: &fakeRepository{
 					fakePush: func(item *shomu2.Item) error {
 						return errors.New("command error")
 					},
@@ -104,13 +101,12 @@ func TestPush_Run(t *testing.T) {
 			args: args{
 				args: []string{"foo"},
 			},
-			want:    shomu2.Fail,
-			wantErr: true,
+			want: shomu2.Fail,
 		},
 		{
 			name: "Pushing item success",
 			fields: fields{
-				data: &fakeRepository{
+				repo: &fakeRepository{
 					fakePush: func(item *shomu2.Item) error {
 						called = true
 						return nil
@@ -127,7 +123,7 @@ func TestPush_Run(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			called = false
-			command, err := shomu2.NewCommand("push", tt.fields.data)
+			command, err := shomu2.NewCommand("push", tt.fields.repo)
 			if err != nil {
 				t.Fatal("unexpected error:", err)
 			}
