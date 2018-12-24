@@ -47,13 +47,12 @@ func (*Pop) Run(args []string) (int, error) {
 	panic("implement me")
 }
 
-// TODO 引数名Rename
-func NewCommand(name string, data ItemRepository) (Command, error) {
+func NewCommand(name string, repo ItemRepository) (Command, error) {
 	switch name {
 	case "push":
-		return &Push{repository: data}, nil
+		return &Push{repository: repo}, nil
 	case "pop":
-		return &Pop{repository: data}, nil
+		return &Pop{repository: repo}, nil
 	default:
 		return nil, errors.New(fmt.Sprintf("command \"%s\" is not exist", name))
 	}
