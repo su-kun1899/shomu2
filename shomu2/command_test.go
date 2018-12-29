@@ -17,6 +17,7 @@ func TestNewCommand(t *testing.T) {
 		name     string
 		args     args
 		wantType reflect.Type
+		wantErr  bool
 	}{
 		{
 			name:     "create push command",
@@ -28,11 +29,17 @@ func TestNewCommand(t *testing.T) {
 			args:     args{cmdName: "pop", repository: &fakeRepository{}},
 			wantType: reflect.TypeOf(&shomu2.Pop{}),
 		},
+		{
+			name:     "not exists command",
+			args:     args{cmdName: "dummy", repository: &fakeRepository{}},
+			wantType: nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := shomu2.NewCommand(tt.args.cmdName, tt.args.repository)
-			if err != nil {
+			if !tt.wantErr && err != nil {
 				t.Fatal("unexpected error:", err)
 			}
 
@@ -41,17 +48,6 @@ func TestNewCommand(t *testing.T) {
 			}
 		})
 	}
-}
-
-// TODO パラメータライズ度テストにしたい
-func TestNewCommand_Push(t *testing.T) {
-	t.Run("not exists command", func(t *testing.T) {
-		// when-then
-		_, err := shomu2.NewCommand("foo", &fakeRepository{})
-		if err == nil {
-			t.Error("expected error did not occur")
-		}
-	})
 }
 
 func TestPush_Run(t *testing.T) {
@@ -63,11 +59,11 @@ func TestPush_Run(t *testing.T) {
 		args []string
 	}
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		called  bool
-		want    int
+		name   string
+		fields fields
+		args   args
+		called bool
+		want   int
 	}{
 		{
 			name: "Less argument error",
